@@ -1,0 +1,31 @@
+services:
+  express_crud:
+    build: .
+    depends_on:
+      database:
+        condition: service_healthy
+    #env_file: .env
+    environment:
+      PORT: 3000
+      DB_URI: postgres://postgres:keyboardcat@database/postgres
+    ports:
+      - 4002:3000
+    command: ["npm", "run", "docker_dev"]
+    volumes:
+      - .:/code
+
+  database:
+    environment:
+      POSTGRES_PASSWORD: keyboardcat
+    healthcheck:
+      test: ["CMD", "psql", "-l", "-U", "postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    image: postgres:latest
+    volumes:
+      - database_volume:/var/lib/postgresql/data
+
+volumes:
+  database_volume:
