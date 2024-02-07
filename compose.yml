@@ -18,10 +18,13 @@ services:
         condition: service_healthy
     ports:
       - 4001:3000
-    volumes:
-      - .:/code
     environment:
       - DB_URI=postgres://postgres:keyboardcat@database/postgres
     command: npm run docker_dev
+    develop:
+      watch:
+        - path: .
+          action: sync
+          target: /code
 volumes:
   database_volume:
